@@ -19,17 +19,38 @@ app.get("/", function (req, res) {
 })
 
 // your first API endpoint...
+app.get("/api", function (req, res) {
+  res.json({
+    unix: Date.now(),
+    utc: new Date().toUTCString(),
+  })
+})
+
 app.get("/api/:date", function (req, res) {
   const differentDateTypes = {}
 
-  if (isNaN(Number(req.params.date))) {
+  /* if (!isNaN(new Date(req.params.date))) {
+    if (isNaN(Number(req.params.date))) {
+      differentDateTypes["unix"] = Date.parse(req.params.date)
+      differentDateTypes["utc"] = new Date(req.params.date).toUTCString()
+    } else {
+      differentDateTypes["unix"] = Number(req.params.date)
+      differentDateTypes["utc"] = new Date(
+        Number(req.params.date)
+      ).toUTCString()
+    }
+  } else {
+    differentDateTypes["error"] = "Invalid Date"
+  } */
+
+  if (!isNaN(req.params.date)) {
+    differentDateTypes["unix"] = Number(req.params.date)
+    differentDateTypes["utc"] = new Date(Number(req.params.date)).toUTCString()
+  } else if (!isNaN(new Date(req.params.date))) {
     differentDateTypes["unix"] = Date.parse(req.params.date)
     differentDateTypes["utc"] = new Date(req.params.date).toUTCString()
   } else {
-    differentDateTypes["unix"] = req.params.date
-    differentDateTypes["utc"] = new Date(
-      Date.parse(req.params.date)
-    ).toUTCString()
+    differentDateTypes["error"] = "Invalid Date"
   }
 
   res.json(differentDateTypes)
